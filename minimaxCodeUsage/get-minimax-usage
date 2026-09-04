@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+set -eu
+
+CONFIG="${HOME}/.mmx/config.json"
+CACHE="${HOME}/.mmx/quota-cache.json"
+TTL=90
+
+# Defaults
+SUB_TYPE="minimax"
+TIER="unknown"
+FIVE_UTIL=0
+FIVE_RESET=""
+SEVEN_UTIL=0
+SEVEN_RESET=""
+
+if [ ! -f "$CONFIG" ]; then
+    echo "SUBSCRIPTION_TYPE=${SUB_TYPE}"
+    echo "RATE_LIMIT_TIER=${TIER}"
+    echo "FIVE_HOUR_UTIL=${FIVE_UTIL}"
+    echo "FIVE_HOUR_RESET=${FIVE_RESET}"
+    echo "SEVEN_DAY_UTIL=${SEVEN_UTIL}"
+    echo "SEVEN_DAY_RESET=${SEVEN_RESET}"
+    exit 0
+fi
+
+# Get token
+TOKEN=$(jq -r '.api_key // empty' "$CONFIG" 2>/dev/null || echo "")
+if [ -z "$TOKEN" ]; then
+    echo "SUBSCRIPTION_TYPE=${SUB_TYPE}"
+    echo "RATE_LIMIT_TIER=${TIER}"
+    echo "FIVE_HOUR_UTIL=${FIVE_UTIL}"
+    echo "FIVE_HOUR_RESET=${FIVE_RESET}"
+    echo "SEVEN_DAY_UTIL=${SEVEN_UTIL}"
+    echo "SEVEN_DAY_RESET=${SEVEN_RESET}"
+    exit 0
+fi
+
+# Check cache
+USE_CACHE=false
+if [ -f "$CACHE" ]; then
+    AGE=$(($(date +%s) - $(jq -r '.ts // 0' "$CACHE" 2>/dev/null || echo "0")))
+    [ "$AGE" -lt "$TTL" ] && USE_CACHE=true
+fi
+
+if [ "$USE_CACHE" = true ]; then
+    DATA=$(jq -r '.data' "$CACHE" 2>/dev/null || echo "{}")
+else
+    DATA=$(curl -s --max-time 5 \
+        -H "Authorization: Bearer $TOKEN" \
+        "https://api.minimax.io/v1/token_plan/remains" 2>/dev/null || echo "{}")
+
+    # Cache it
+    if echo "$DATA" | jq -e '.model_remains' >/dev/null 2>&1; then
+        echo "{\"ts\":$(date +%s),\"data\":$DATA}" > "$CACHE" 2>/dev/null || true
+    fi
+fi
+
+# Parse "general" model
+GENERAL=$(echo "$DATA" | jq -c '.model_remains[] | select(.model_name == "general")' 2>/dev/null || echo "{}")
+
+if [ "$GENERAL" != "{}" ] && [ -n "$GENERAL" ]; then
+    REM_PCT=$(echo "$GENERAL" | jq -r '.current_interval_remaining_percent')
+    WEEK_PCT=$(echo "$GENERAL" | jq -r '.current_weekly_remaining_percent')
+    REM_MS=$(echo "$GENERAL" | jq -r '.remains_time // 0')
+    WEEK_REM_MS=$(echo "$GENERAL" | jq -r '.weekly_remains_time // 0')
+
+    # Utilization = 100 - remaining_percent
+    FIVE_UTIL=$(awk "BEGIN {printf \"%.2f\", 100 - $REM_PCT}")
+    SEVEN_UTIL=$(awk "BEGIN {printf \"%.2f\", 100 - $WEEK_PCT}")
+
+    # Reset timestamps
+    NOW_MS=$(date +%s%3N)
+    FIVE_RESET=$(awk -v ms=$((NOW_MS + REM_MS)) 'BEGIN {print strftime("%Y-%m-%dT%H:%M:%SZ", ms/1000)}')
+    SEVEN_RESET=$(awk -v ms=$((NOW_MS + WEEK_REM_MS)) 'BEGIN {print strftime("%Y-%m-%dT%H:%M:%SZ", ms/1000)}')
+fi
+
+echo "SUBSCRIPTION_TYPE=${SUB_TYPE}"
+echo "RATE_LIMIT_TIER=${TIER}"
+echo "FIVE_HOUR_UTIL=${FIVE_UTIL}"
+echo "FIVE_HOUR_RESET=${FIVE_RESET}"
+echo "SEVEN_DAY_UTIL=${SEVEN_UTIL}"
+echo "SEVEN_DAY_RESET=${SEVEN_RESET}"

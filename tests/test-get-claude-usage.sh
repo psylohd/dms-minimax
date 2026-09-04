@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Tests for get-claude-usage script
+# Tests for get-minimax-usage script
 set -eu
 
 SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-SCRIPT="$SCRIPT_DIR/get-claude-usage"
+SCRIPT="$SCRIPT_DIR/minimaxCodeUsage/get-minimax-usage"
 PASS=0
 FAIL=0
 

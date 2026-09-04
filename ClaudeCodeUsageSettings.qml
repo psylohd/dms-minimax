@@ -7,7 +7,7 @@ import "translations.js" as Tr
 
 PluginSettings {
     id: root
-    pluginId: "claudeCodeUsage"
+    pluginId: "minimaxCodeUsage"
 
     property string lang: (SessionData.locale || Qt.locale().name).split(/[_-]/)[0]
     function tr(key) {
@@ -16,7 +16,7 @@ PluginSettings {
 
     StyledText {
         width: parent.width
-        text: root.tr("Claude Code Usage")
+        text: root.tr("MiniMax Code Usage")
         font.pixelSize: Theme.fontSizeLarge
         font.weight: Font.Medium
         color: Theme.surfaceText
@@ -24,7 +24,7 @@ PluginSettings {
 
     StyledText {
         width: parent.width
-        text: root.tr("Monitor your Claude Code subscription usage. Rate limits and subscription tier are detected automatically via the Anthropic API.")
+        text: root.tr("Monitor your MiniMax Code subscription usage. Rate limits and subscription tier are detected automatically via the MiniMax API.")
         font.pixelSize: Theme.fontSizeSmall
         color: Theme.surfaceVariantText
         wrapMode: Text.WordWrap
@@ -111,7 +111,7 @@ PluginSettings {
 
         StyledText {
             width: parent.width
-            text: root.tr("Track extra Claude config directories. Point at a CLAUDE_CONFIG_DIR (the folder containing projects/). ~/.claude, Claude Code Switcher and claude-code-profiles are detected automatically.")
+            text: root.tr("Track extra MiniMax config directories. Point at a config directory (the folder containing projects/).")
             font.pixelSize: Theme.fontSizeSmall
             color: Theme.surfaceVariantText
             wrapMode: Text.WordWrap

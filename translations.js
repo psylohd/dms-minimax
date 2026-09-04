@@ -1,8 +1,8 @@
 .pragma library
 
 var strings = {
-    "Claude Code Usage":
-        { fr: "Utilisation Claude Code", es: "Uso de Claude Code" },
+    "MiniMax Code Usage":
+        { fr: "Utilisation MiniMax Code", es: "Uso de MiniMax Code" },
     "Subscription":
         { fr: "Abonnement", es: "Suscripción" },
     "5h Rate Window":
@@ -44,10 +44,10 @@ var strings = {
     "Enterprise":
         { fr: "Entreprise", es: "Empresa" },
     // Settings
-    "Monitor your Claude Code subscription usage. Rate limits and subscription tier are detected automatically via the Anthropic API.":
+    "Monitor your MiniMax Code subscription usage. Rate limits and subscription tier are detected automatically via the MiniMax API.":
         {
-            fr: "Surveillez l'utilisation de votre abonnement Claude Code. Les limites d'utilisation et le type d'abonnement sont détectés automatiquement via l'API Anthropic.",
-            es: "Supervisa el uso de tu suscripción a Claude Code. Los límites de uso y el tipo de suscripción se detectan automáticamente mediante la API de Anthropic."
+            fr: "Surveillez l'utilisation de votre abonnement MiniMax Code. Les limites d'utilisation et le type d'abonnement sont détectés automatiquement via l'API MiniMax.",
+            es: "Supervisa el uso de tu suscripción a MiniMax Code. Los límites de uso y el tipo de suscripción se detectan automáticamente mediante la API de MiniMax."
         },
     "Refresh Interval":
         { fr: "Intervalle de rafraîchissement", es: "Intervalo de actualización" },
@@ -81,10 +81,10 @@ var strings = {
         { fr: "Nom", es: "Nombre" },
     "Config directory":
         { fr: "Dossier de configuration", es: "Directorio de configuración" },
-    "Track extra Claude config directories. Point at a CLAUDE_CONFIG_DIR (the folder containing projects/). ~/.claude, Claude Code Switcher and claude-code-profiles are detected automatically.":
+    "Track extra MiniMax config directories. Point at a config directory (the folder containing projects/).":
         {
-            fr: "Suivez d'autres dossiers de configuration Claude. Indiquez un CLAUDE_CONFIG_DIR (le dossier contenant projects/). ~/.claude, Claude Code Switcher et claude-code-profiles sont détectés automatiquement.",
-            es: "Haz seguimiento de otros directorios de configuración de Claude. Indica un CLAUDE_CONFIG_DIR (la carpeta que contiene projects/). ~/.claude, Claude Code Switcher y claude-code-profiles se detectan automáticamente."
+            fr: "Suivez d'autres dossiers de configuration MiniMax. Indiquez un répertoire config (le dossier contenant projects/).",
+            es: "Haz seguimiento de otros directorios de configuración de MiniMax. Indica un directorio config (la carpeta que contiene projects/)."
         },
     "Add":
         { fr: "Ajouter", es: "Añadir" },
