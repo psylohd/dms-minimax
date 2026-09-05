@@ -1,6 +1,16 @@
 #!/usr/bin/env bash
 set -eu
 
+# Auto-detect script directory (supports symlinks and being run from any cwd)
+SOURCE="${BASH_SOURCE[0]}"
+while [ -L "$SOURCE" ]; do
+    DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
+    SOURCE="$(readlink "$SOURCE")"
+    [[ "$SOURCE" != /* ]] && SOURCE="$DIR/$SOURCE"
+done
+SCRIPT_DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
+cd "$SCRIPT_DIR"
+
 DEST="$HOME/.config/DankMaterialShell/plugins/minimaxCodeUsage"
 
 if [ ! -d "$(dirname "$DEST")" ]; then
@@ -16,15 +26,10 @@ rm -rf "$DEST"
 # Create destination
 mkdir -p "$DEST"
 
-# Copy files excluding .git and minimaxCodeUsage subdir
-find "$HOME/dev/dms-minimax" -mindepth 1 -not -path '*/.git/*' -not -path '*/minimaxCodeUsage/*' -exec cp -rP {} "$DEST/" \;
-
-# Copy minimaxCodeUsage subdir contents
-mkdir -p "$DEST/minimaxCodeUsage"
-find "$HOME/dev/dms-minimax/minimaxCodeUsage" -mindepth 1 -exec cp -rP {} "$DEST/minimaxCodeUsage/" \;
+# Copy all plugin files
+find . -mindepth 1 -not -path '*/.git/*' -exec cp -rP {} "$DEST/" \;
 
 # Make script executable
-chmod +x "$DEST/minimaxCodeUsage/get-minimax-usage"
 chmod +x "$DEST/get-minimax-usage" 2>/dev/null || true
 
 echo "Done."

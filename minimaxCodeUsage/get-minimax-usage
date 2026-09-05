@@ -68,10 +68,12 @@ if [ "$GENERAL" != "{}" ] && [ -n "$GENERAL" ]; then
     FIVE_UTIL=$(awk "BEGIN {printf \"%.2f\", 100 - $REM_PCT}")
     SEVEN_UTIL=$(awk "BEGIN {printf \"%.2f\", 100 - $WEEK_PCT}")
 
-    # Reset timestamps
-    NOW_MS=$(date +%s%3N)
-    FIVE_RESET=$(awk -v ms=$((NOW_MS + REM_MS)) 'BEGIN {print strftime("%Y-%m-%dT%H:%M:%SZ", ms/1000)}')
-    SEVEN_RESET=$(awk -v ms=$((NOW_MS + WEEK_REM_MS)) 'BEGIN {print strftime("%Y-%m-%dT%H:%M:%SZ", ms/1000)}')
+    # Reset timestamps (compute epoch seconds in bash, then format in awk)
+    # Do NOT pass millisecond timestamps to awk — double precision loses ~3 digits
+    FIVE_RESET_EPOCH=$(( $(date +%s) * 1000 + REM_MS ))
+    SEVEN_RESET_EPOCH=$(( $(date +%s) * 1000 + WEEK_REM_MS ))
+    FIVE_RESET=$(awk -v ms=$FIVE_RESET_EPOCH 'BEGIN {print strftime("%Y-%m-%dT%H:%M:%SZ", int(ms/1000))}')
+    SEVEN_RESET=$(awk -v ms=$SEVEN_RESET_EPOCH 'BEGIN {print strftime("%Y-%m-%dT%H:%M:%SZ", int(ms/1000))}')
 fi
 
 echo "SUBSCRIPTION_TYPE=${SUB_TYPE}"
