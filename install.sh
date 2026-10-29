@@ -14,8 +14,8 @@ cd "$SCRIPT_DIR"
 DEST="$HOME/.config/DankMaterialShell/plugins/minimaxCodeUsage"
 
 if [ ! -d "$(dirname "$DEST")" ]; then
-    echo "Error: DMS config directory not found. Is DMS installed?"
-    exit 1
+    echo "DMS plugins directory not found. Creating ~/.config/DankMaterialShell/plugins/ ..."
+    mkdir -p "$(dirname "$DEST")"
 fi
 
 echo "Installing MiniMax Code Usage to $DEST ..."
